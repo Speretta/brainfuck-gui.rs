@@ -1,6 +1,14 @@
 mod core;
 
 
+
+
+
+
+
+
+use crate::core::BrainFuck;
+
 use dioxus::{prelude::*, desktop::tao::dpi::LogicalSize};
 
 
@@ -20,44 +28,17 @@ fn main() {
 }
 
 
+
 fn app(cx: Scope) -> Element {
-    let mut cell_list = [0; 32];
+    
+    let code = use_state(&cx, || String::from("++++++++[>++++++<-]>."));
 
-    let code = use_state(&cx, || String::from(r#"+++[>+++++<-]>>+<[>>++++>++>+++++>+++++>+>>+<++[++<]>---]
+    let delay = use_state(&cx, || 2000);
 
-    >++++.>>>.+++++.>------.<--.+++++++++.>+.+.<<<<---.[>]<<.<<<.-------.>++++.
-    <+++++.+.>-----.>+.<++++.>>++.>-----.
     
-    <<<-----.+++++.-------.<--.<<<.>>>.<<+.>------.-..--.+++.-----<++.<--[>+<-]
-    >>>>>--.--.<++++.>>-.<<<.>>>--.>.
-    
-    <<<<-----.>----.++++++++.----<+.+++++++++>>--.+.++<<<<.[>]<.>>
-    
-    ,[>>+++[<+++++++>-]<[<[-[-<]]>>[>]<-]<[<+++++>-[<+++>-[<-->-[<+++>-
-    [<++++[>[->>]<[>>]<<-]>[<+++>-[<--->-[<++++>-[<+++[>[-[-[-[->>]]]]<[>>]<<-]
-    >[<+>-[<->-[<++>-[<[-]>-]]]]]]]]]]]]]
-    
-    <[
-        -[-[>+<-]>]
-        <[<<<<.>+++.+.+++.-------.>---.++.<.>-.++<<<<.[>]>>>>>>>>>]
-        <[[<]>++.--[>]>>>>>>>>]
-        <[<<++..-->>>>>>]
-        <[<<..>>>>>]
-        <[<<..-.+>>>>]
-        <[<<++..---.+>>>]
-        <[<<<.>>.>>>>>]
-        <[<<<<-----.+++++>.----.+++.+>---.<<<-.[>]>]
-        <[<<<<.-----.>++++.<++.+++>----.>---.<<<.-[>]]
-        <[<<<<<----.>>.<<.+++++.>>>+.++>.>>]
-        <.>
-    ]>
-    ,]
-    
-    <<<<<.<+.>++++.<----.>>---.<<<-.>>>+.>.>.[<]>++.[>]<.
-    >"#));
 
-    let speed = use_state(&cx, || 2000u16);
-
+    
+    
 
     cx.render(rsx! {
         style { [include_str!("./style.css")] }
@@ -65,21 +46,20 @@ fn app(cx: Scope) -> Element {
             id: "memorylistdiv",
             ul {
                 id: "memorylist",
-                (0..cell_list.len()).into_iter().map(|_|{
+                /*bf.read().get_cell_list().iter().map(|value| {
                     rsx!{
                         div{
                             class: "memorydiv",
                             li{
                                 class: "memory",
-                                "0"
+                                "{value}"
                             },
 
                             
                         }
                         
                     }
-                })
-            
+                })*/
             }
 
             
@@ -117,7 +97,7 @@ fn app(cx: Scope) -> Element {
             id: "controldiv",
             div{
                 label{
-                    "Speed:",
+                    "Delay:",
                 }
             }
             div{
@@ -125,10 +105,10 @@ fn app(cx: Scope) -> Element {
                 input{
                     r#type: "range",
                     max: "2000",
-                    value: "{speed}",
+                    value: "{delay}",
                     oninput: move |e| {
                         if let Ok(number) = e.value.parse::<u16>(){
-                            speed.set(number);
+                            
                         }
                     },
                 }
@@ -138,10 +118,10 @@ fn app(cx: Scope) -> Element {
                         id: "showspeed",
                         r#type: "number",
                         max: "2000",
-                        value: "{speed}",
+                        value: "{delay}",
                         oninput: move |e| {
-                            if let Ok(number) = e.value.parse::<u16>(){
-                                speed.set(number);
+                            if let Ok(mut number) = e.value.parse::<u16>(){
+                                
                             }
                         },
                     }
@@ -162,6 +142,12 @@ fn app(cx: Scope) -> Element {
                 id: "interpretebutton",
                 r#type: "button",
                 value: "Interprete",
+                onclick: move |_| {
+                    
+                    cx.spawn(async move{
+                       
+                    });
+                },
             }
         }
     })

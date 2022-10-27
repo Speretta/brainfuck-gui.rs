@@ -3,38 +3,27 @@ mod error;
 
 
 use async_recursion::async_recursion;
-use dioxus::prelude::*;
-
-use std::collections::VecDeque;
+use dioxus::prelude::UseState;
+use std::{collections::VecDeque};
 
 use crate::core::error::BrainFuckError;
 
 use self::streams::{BrainFuckStream, Input};
 
 
-pub struct BrainFuck<'a, const N: usize>{
+#[derive(PartialEq, Props)]
+pub struct BrainFuck<const N: usize>{
     cell_list: [u8; N],
     ptr: usize,
-    delay: &'a mut u16,
     stream: BrainFuckStream,
-    
 }
 
 
-
-
-impl<'a, const N: usize> BrainFuck<'a, N>{
-    pub fn new(cell_list: [u8; N], delay: &'a mut u16) -> Self{
-        BrainFuck { cell_list, ptr: 0, delay, stream: BrainFuckStream { input: streams::Input::Wait, output_queue: VecDeque::new() }}
+impl<const N: usize> BrainFuck<N>{
+    pub fn new(cell_list: [u8; N]) -> Self{
+        BrainFuck { cell_list, ptr: 0, stream: BrainFuckStream { input: streams::Input::Wait, output_queue: VecDeque::new() }}
     }
 
-    pub fn get_cell_list(&self) -> &[u8; N]{
-        &self.cell_list
-    }
-
-    pub fn get_stream(&self) -> &BrainFuckStream{
-        &self.stream
-    }
 
     #[async_recursion]
     pub async fn tokenize(&self, raw_code: &'static str) -> Vec<Token>{
@@ -195,7 +184,9 @@ impl<'a, const N: usize> BrainFuck<'a, N>{
         }
     }
 
-   
+    pub fn get_stream(&self) -> &BrainFuckStream{
+        &self.stream
+    }
 }
 
 
