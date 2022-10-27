@@ -1,4 +1,5 @@
-use std::{io::Read, collections::VecDeque, sync::{Arc, Mutex}};
+use std::{io::Read, collections::VecDeque};
+
 
 pub struct BrainFuckStream{
     pub(super) input: Input,
