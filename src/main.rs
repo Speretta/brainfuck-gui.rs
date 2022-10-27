@@ -7,6 +7,8 @@ mod core;
 
 
 
+use std::borrow::BorrowMut;
+
 use crate::core::BrainFuck;
 
 use dioxus::{prelude::*, desktop::tao::dpi::LogicalSize};
@@ -33,7 +35,13 @@ fn app(cx: Scope) -> Element {
     
     let code = use_state(&cx, || String::from("++++++++[>++++++<-]>."));
 
-    let delay = use_state(&cx, || 2000);
+   
+
+    let mut bf = use_ref(&cx, || BrainFuck::new([0; 32]));
+
+    let delay = bf.with(|a| {
+        a.get_delay().clone()
+    });
 
     
 
@@ -46,7 +54,7 @@ fn app(cx: Scope) -> Element {
             id: "memorylistdiv",
             ul {
                 id: "memorylist",
-                /*bf.read().get_cell_list().iter().map(|value| {
+                bf.read().get_cell_list().iter().map(|value| {
                     rsx!{
                         div{
                             class: "memorydiv",
@@ -59,7 +67,7 @@ fn app(cx: Scope) -> Element {
                         }
                         
                     }
-                })*/
+                })
             }
 
             
@@ -108,7 +116,7 @@ fn app(cx: Scope) -> Element {
                     value: "{delay}",
                     oninput: move |e| {
                         if let Ok(number) = e.value.parse::<u16>(){
-                            
+                            *bf.write().get_delay_mut() = number;
                         }
                     },
                 }
@@ -121,7 +129,7 @@ fn app(cx: Scope) -> Element {
                         value: "{delay}",
                         oninput: move |e| {
                             if let Ok(mut number) = e.value.parse::<u16>(){
-                                
+                                *bf.write().get_delay_mut() = number;
                             }
                         },
                     }
